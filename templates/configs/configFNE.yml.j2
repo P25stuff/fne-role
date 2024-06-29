@@ -1,0 +1,83 @@
+daemon: true
+
+log:
+    displayLevel: {{ hostvars[inventory_hostname]['displayLevel'] | default(1) }}
+    fileLevel: {{ hostvars[inventory_hostname]['fileLevel'] | default(1) }}
+    filePath: /var/log/{{ dvm_folder }}/
+    activityFilePath: /var/log/{{ dvm_folder }}/
+    fileRoot: {{ hostvars[inventory_hostname]['fileRoot'] | default("DVM-FNE") }}
+
+master:
+    peerId: {{ hostvars[inventory_hostname]['peerId'] }}
+    address: {{ hostvars[inventory_hostname]['address'] | default("0.0.0.0") }}
+    port: {{ hostvars[inventory_hostname]['fne_port'] }}
+    password: {{ hostvars[inventory_hostname]['fne_password'] }}
+    verbose: {{ hostvars[inventory_hostname]['verbose'] | default(true) }}
+    debug: {{ hostvars[inventory_hostname]['debug'] | default(false) }}
+    connectionLimit: {{ hostvars[inventory_hostname]['connectionLimit'] | default(100) }}
+    reportPeerPing: {{ hostvars[inventory_hostname]['reportPeerPing'] | default(true) }}
+    encrypted: {{ hostvars[inventory_hostname]['encrypted'] | default(false) }}
+    presharedKey: {{ hostvars[inventory_hostname]['presharedKey'] | default("000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F") }}
+    allowDMRTraffic: {{ hostvars[inventory_hostname]['allowDMRTraffic'] | default(true) }}
+    allowP25Traffic: {{ hostvars[inventory_hostname]['allowP25Traffic'] | default(true) }}
+    allowNXDNTraffic: {{ hostvars[inventory_hostname]['allowNXDNTraffic'] | default(true) }}
+    parrotDelay: {{ hostvars[inventory_hostname]['parrotDelay'] | default(2000) }}
+    parrotGrantDemand: {{ hostvars[inventory_hostname]['parrotGrantDemand'] | default(true) }}
+    parrotOnlyToOrginiatingPeer: {{ hostvars[inventory_hostname]['parrotOnlyToOrginiatingPeer'] | default(false) }}
+    restrictGrantToAffiliatedOnly: {{ hostvars[inventory_hostname]['restrictGrantToAffiliatedOnly'] | default(false) }}
+    disallowAdjStsBcast: {{ hostvars[inventory_hostname]['disallowAdjStsBcast'] | default(false) }}
+    disallowExtAdjStsBcast: {{ hostvars[inventory_hostname]['disallowExtAdjStsBcast'] | default(true) }}
+    allowConvSiteAffOverride: {{ hostvars[inventory_hostname]['allowConvSiteAffOverride'] | default(true) }}
+    filterHeaders: {{ hostvars[inventory_hostname]['filterHeaders'] | default(true) }}
+    filterTerminators: {{ hostvars[inventory_hostname]['filterTerminators'] | default(true) }}
+    dropUnitToUnit: {{ hostvars[inventory_hostname]['dropUnitToUnit'] | default([]) | to_json}}
+    talkgroup_rules:
+        file: /opt/{{ dvm_folder }}/configs/talkgroup_rules.yml
+        time: {{ hostvars[inventory_hostname]['tg_time'] | default(30) }}
+
+{% if hostvars[inventory_hostname]['peers'] is defined and hostvars[inventory_hostname]['peers'] -%}
+peers:
+{% for peer in hostvars[inventory_hostname]['peers'] -%}
+  - name: "{{ peer.name }}"
+    enabled: {{ peer.enabled | default(true) }}
+    masterAddress: "{{ peer.masterAddress }}"
+    masterPort: {{ peer.masterPort }}
+    password: "{{ peer.password }}"
+    identity: "{{ peer.identity }}"
+    peerId: {{ peer.peerId }}
+    blockTrafficTo: {{ peer.blockTrafficTo | default([]) | to_json }}
+    encrypted: {{ peer.encrypted | default(false) }}
+    presharedKey: "{{ peer.presharedKey | default("000102030405060708090A0B0C0D0E0F000102030405060708090A0B0C0D0E0F") }}"
+    rxFrequency: {{ peer.rxFrequency | default(0) }}
+    txFrequency: {{ peer.txFrequency | default(0) }}
+    latitude: {{ peer.latitude | default("0.0") }}
+    longitude: {{ peer.longitude | default("0.0") }}
+    location: "{{ peer.location | default("nowhere")}}"
+    debug: {{ peer.debug | default(false) }}
+{% endfor -%}
+{% endif -%}
+
+system:
+    pingTime: {{ hostvars[inventory_hostname]['pingTime'] | default(5) }}
+    maxMissedPings: {{ hostvars[inventory_hostname]['maxMissedPings'] | default(10) }}
+    tgRuleUpdateTime: {{ hostvars[inventory_hostname]['tgRuleUpdateTime'] | default(10) }}
+    sendTalkgroups: {{ hostvars[inventory_hostname]['sendTalkgroups'] | default(true) }}
+    useAlternatePortForDiagnostics: {{ hostvars[inventory_hostname]['useAlternatePortForDiagnostics'] | default(true) }}
+    allowActivityTransfer: {{ hostvars[inventory_hostname]['allowActivityTransfer'] | default(true) }}
+    allowDiagnosticTransfer: {{ hostvars[inventory_hostname]['allowDiagnosticTransfer'] | default(true) }}
+    restEnable: {{ hostvars[inventory_hostname]['restEnable'] | default(false) }}
+    restAddress: {{ hostvars[inventory_hostname]['restAddress'] | default("127.0.0.1") }}
+    restPort: {{ hostvars[inventory_hostname]['restPort'] | default(9990) }}
+    restSsl: {{ hostvars[inventory_hostname]['restSsl'] | default(false) }}
+    restSslCertificate: {{ hostvars[inventory_hostname]['restSslCertificate'] | default("web.crt") }}
+    restSslKey: {{ hostvars[inventory_hostname]['restSslKey'] | default("web.key") }}
+    restPassword: {{ hostvars[inventory_hostname]['restPassword'] | default("password") }}
+    restDebug: {{ hostvars[inventory_hostname]['restDebug'] | default(false) }}
+    radio_id:
+        file: /opt/{{ dvm_folder }}/configs/rid_acl.dat
+        time: {{ hostvars[inventory_hostname]['rid_time'] | default(2) }}
+    peer_acl:
+        enabled: {{ hostvars[inventory_hostname]['peer_acl_enabled'] | default(false) }}
+        mode: {{ hostvars[inventory_hostname]['peer_acl_mode'] | default("whitelist") }}
+        file: /opt/{{ dvm_folder }}/configs/peer_list.dat
+        time: {{ hostvars[inventory_hostname]['peer_acl_time'] | default(2) }}
