@@ -1,0 +1,4 @@
+# RID,Enabled (1 = Enabled / 0 = Disabled),Optional Alias,<newline>
+{% for item in ridlist %}
+{{ item.rid }},{{ item.enabled }},{{ item.alias }},
+{% endfor %}
