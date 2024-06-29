@@ -1,0 +1,14 @@
+[Unit]
+Description=DVM Provisioning Service
+After=network.target fne.service
+Requires=fne.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/{{ dvm_folder }}/dvmprov
+Environment="PATH=/opt/{{ dvm_folder }}/dvmprov/bin"
+ExecStart=/opt/{{ dvm_folder }}/dvmprov/bin/python /opt/{{ dvm_folder }}/dvmprov/dvmprov.py -b 0.0.0.0
+
+[Install]
+WantedBy=multi-user.target
