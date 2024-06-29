@@ -1,0 +1,11 @@
+---
+- name: Check if FNE service exists
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/fne.service"
+  register: fne_service
+
+- name: Stop FNE service if it exists
+  ansible.builtin.systemd:
+    name: "fne.service"
+    state: stopped
+  when: fne_service.stat.exists
