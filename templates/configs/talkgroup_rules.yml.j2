@@ -1,0 +1,54 @@
+# Talkgroup Configuration
+groupVoice:
+{% for talkgroup in talkgroups %}
+  - name: "{{ talkgroup.name }}"
+    config:
+      active: "{{ talkgroup.config.active }}"
+      affiliated: "{{ talkgroup.config.affiliated }}"
+      parrot: "{{ talkgroup.config.parrot | default(false) }}"
+      {% if talkgroup.config.inclusion is defined -%}
+      inclusion:
+        {% for incl in talkgroup.config.inclusion -%}
+        - {{ incl }}
+        {% endfor -%}
+      {% else -%}
+      inclusion: []
+      {% endif -%}
+      {% if talkgroup.config.exclusion is defined -%}
+      exclusion:
+        {% for excl in talkgroup.config.exclusion -%}
+        - {{ excl }}
+        {% endfor -%}
+      {% else -%}
+      exclusion: []
+      {% endif -%}
+      {% if talkgroup.config.rewrite is defined -%}
+      rewrite:
+        {% for rw in talkgroup.config.rewrite -%}
+        - peerid: {{ rw.peerid }}
+          tgid: {{ rw.tgid }}
+          slot: {{ rw.slot | default(1) }}
+        {% endfor -%}
+      {% else -%}
+      rewrite: []
+      {% endif -%}
+      {% if talkgroup.config.always is defined -%}
+      always:
+        {% for alw in talkgroup.config.always -%}
+        - {{ alw }}
+        {% endfor -%}
+      {% else -%}
+      always: []
+      {% endif -%}
+      {% if talkgroup.config.preferred is defined -%}
+      preferred:
+        {% for pref in talkgroup.config.preferred -%}
+        - {{ pref }}
+        {% endfor -%}
+      {% else -%}
+      preferred: []
+      {% endif -%}
+    source:
+      tgid: "{{ talkgroup.source.tgid }}"
+      slot: "{{ talkgroup.source.slot | default(1) }}"
+{% endfor %}
