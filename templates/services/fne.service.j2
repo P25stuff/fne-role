@@ -1,0 +1,15 @@
+[Unit]
+Description=FNE Service
+After=syslog.target network.target
+{% if use_netbird %}
+Requires=netbird.service
+{% endif %}
+
+[Service]
+User=root
+Type=forking
+ExecStart=/opt/{{ dvm_folder }}/dvmfne -c /opt/{{ dvm_folder }}/configs/configFNE.yml
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

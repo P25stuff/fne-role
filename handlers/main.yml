@@ -1,0 +1,19 @@
+---
+- name: Reboot System
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+    msg: "Rebooting the system to apply changes"
+
+- name: Restart FNE service
+  ansible.builtin.systemd:
+    name: "fne.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: Enable and start FNE service
+  ansible.builtin.systemd:
+    name: "fne.service"
+    enabled: true
+    state: started
+    daemon_reload: true

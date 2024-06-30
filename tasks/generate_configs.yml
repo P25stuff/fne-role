@@ -1,0 +1,64 @@
+---
+- name: Generate FNE configuration from template
+  ansible.builtin.template:
+    src: templates/configs/configFNE.yml.j2
+    dest: "/opt/{{ dvm_folder }}/configs/configFNE.yml"
+
+- name: Load talkgroup configuration data
+  ansible.builtin.include_vars:
+    file: "{{ tg_config_file }}"
+    name: talkgroup_data
+
+- name: Generate talkgroup configuration from template
+  ansible.builtin.template:
+    src: templates/configs/talkgroup_rules.yml.j2
+    dest: "/opt/{{ dvm_folder }}/configs/talkgroup_rules.yml"
+  vars:
+    talkgroups: "{{ talkgroup_data.groupVoice }}"
+
+- name: Load RID configuration data
+  ansible.builtin.include_vars:
+    file: "{{ rid_config_file }}"
+    name: rid_data
+
+- name: Generate RID configuration from template
+  ansible.builtin.template:
+    src: templates/configs/rid_acl.dat.j2
+    dest: "/opt/{{ dvm_folder }}/configs/rid_acl.dat"
+  vars:
+    ridlist: "{{ rid_data.rid_list }}"
+
+- name: Load peer list configuration data
+  ansible.builtin.include_vars:
+    file: "{{ peerlist_config_file }}"
+    name: peerlist_data
+
+- name: Generate peer list configuration from template
+  ansible.builtin.template:
+    src: templates/configs/peer_list.dat.j2
+    dest: "/opt/{{ dvm_folder }}/configs/peer_list.dat"
+  vars:
+    peerlist: "{{ peerlist_data.peer_list }}"
+
+- name: Generate DSD+ groups list from template
+  ansible.builtin.template:
+    src: templates/others/dsdplus.groups.j2
+    dest: "/opt/{{ dvm_folder }}/configs/dsdplus.groups"
+  vars:
+    talkgroups: "{{ talkgroup_data.groupVoice }}"
+
+- name: Ensure local backup directory exists
+  local_action:
+    module: ansible.builtin.file
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "./local_backups/"
+    - "./local_backups/fne/"
+
+- name: Fetch the generated templates for local backup
+  ansible.builtin.fetch:
+    src: "/opt/{{ dvm_folder }}/configs"
+    dest: "./local_backups/fne/"
+    flat: yes

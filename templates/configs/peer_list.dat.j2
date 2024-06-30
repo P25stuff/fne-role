@@ -1,0 +1,4 @@
+# Entry Format: "PeerID,Peer Password,<newline>"
+{% for item in peerlist %}
+{{ item.peerid }},{{ item.peerpassword }},
+{% endfor %}
