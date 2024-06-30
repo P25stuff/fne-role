@@ -1,0 +1,9 @@
+---
+- name: Stop FNE service if it exists
+  ansible.builtin.import_tasks: stop_service.yml
+
+- name: Include configuration generation tasks
+  ansible.builtin.include_tasks: generate_configs.yml
+
+- name: Start FNE service if it exists
+  ansible.builtin.import_tasks: start_service.yml
