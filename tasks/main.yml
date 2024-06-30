@@ -1,0 +1,15 @@
+---
+- name: Execute Debian or Ubuntu specific tasks
+  ansible.builtin.import_tasks: debian.yml
+
+- name: Get and install the DVM binaries
+  ansible.builtin.import_tasks: get_install_dvm.yml
+  when: install
+
+- name: Generate FNE configurations from template without reinstalling
+  ansible.builtin.import_tasks: configs_without_install.yml
+  when: not install
+
+- name: Install and configure the DVM Provisioning Manager
+  ansible.builtin.import_tasks: install_dvmprov.yml
+  when: dvmprov
