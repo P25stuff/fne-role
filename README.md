@@ -31,6 +31,8 @@ The role is configured in a way every single configuration item can be overridde
 
 In addition, this role expects files for RIDs, talkgroups, and peerlist (if applicable).  The information can be provided in any way, but for security purposes, the `ansible-deploy` repo relies on the info being in a private repository - [provided as an example](https://github.com/p25stuff/system-info/) in public form.
 
+The role will create a new directory at `./local_backups/fne/` and copy the generated configs locally upon running.
+
 ### FNE Important Variables
 
 | Variable | Description | Default | Required |
